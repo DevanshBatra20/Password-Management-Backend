@@ -18,8 +18,11 @@ public class UserPassword {
 
     private String password;
     private String imageUrl;
+    private String name;
+    private String type;
 
     @ManyToOne
     @JoinColumn(name = "user_list" )
     private User users;
+
 }

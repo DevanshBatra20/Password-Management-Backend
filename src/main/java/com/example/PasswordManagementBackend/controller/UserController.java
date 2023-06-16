@@ -28,8 +28,9 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public User getUserId(@RequestParam Long userId){
-        return userService.getUser(userId);
+    public ResponseEntity<User> getUserId(@RequestParam Long userId) throws UserNotFound{
+        User user = userService.getUser(userId);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/changePassword")

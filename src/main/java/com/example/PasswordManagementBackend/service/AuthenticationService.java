@@ -2,6 +2,8 @@ package com.example.PasswordManagementBackend.service;
 
 import com.example.PasswordManagementBackend.entity.Role;
 import com.example.PasswordManagementBackend.entity.User;
+import com.example.PasswordManagementBackend.exception.EmailAlreadyInUse;
+import com.example.PasswordManagementBackend.exception.InvalidCredentials;
 import com.example.PasswordManagementBackend.exception.UserAlreadyExists;
 import com.example.PasswordManagementBackend.exception.UserNotFound;
 import com.example.PasswordManagementBackend.model.AuthenticationRequestModel;
@@ -24,8 +26,16 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponseModel register(RegisterRequestModel registerRequestModel)  throws UserAlreadyExists {
-        if (userRepository.findByUsername(registerRequestModel.getUsername()).isEmpty()){
+    public AuthenticationResponseModel register(RegisterRequestModel registerRequestModel)  throws UserAlreadyExists, EmailAlreadyInUse {
+
+        if (userRepository.findByUsername(registerRequestModel.getUsername()).isPresent()){
+            throw new UserAlreadyExists();
+        }
+
+        if (userRepository.findByEmail(registerRequestModel.getEmail()).isPresent()){
+            throw new EmailAlreadyInUse();
+        }
+
             var user = User.builder()
                     .fullName(registerRequestModel.getFullName())
                     .username(registerRequestModel.getUsername())
@@ -39,12 +49,10 @@ public class AuthenticationService {
                     .jwtToken(jwtToken)
                     .userId(user.getId())
                     .build();
-        }
 
-        throw new UserAlreadyExists();
     }
 
-    public AuthenticationResponseModel authenticate(AuthenticationRequestModel authenticationRequestModel) {
+    public AuthenticationResponseModel authenticate(AuthenticationRequestModel authenticationRequestModel) throws InvalidCredentials {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequestModel.getUsername(),
@@ -52,7 +60,10 @@ public class AuthenticationService {
                 )
         );
         var user = userRepository.findByUsername(authenticationRequestModel.getUsername())
-                .orElseThrow();
+                .orElse(null);
+        if (user == null){
+            throw new InvalidCredentials();
+        }
         var jwtToken = jwtService.generateToken(user);
         var id = user.getId();
         return AuthenticationResponseModel.builder()

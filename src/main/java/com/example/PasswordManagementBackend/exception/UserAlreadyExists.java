@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class UserAlreadyExists extends BaseException{
     public UserAlreadyExists() {
-        super("User already exist", HttpStatus.BAD_REQUEST);
+        super("User already exist with same username", HttpStatus.BAD_REQUEST);
     }
 }

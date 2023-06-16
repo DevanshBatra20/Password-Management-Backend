@@ -1,6 +1,7 @@
 package com.example.PasswordManagementBackend.service;
 
 import com.example.PasswordManagementBackend.entity.UserPassword;
+import com.example.PasswordManagementBackend.exception.NoPasswordFoundException;
 import com.example.PasswordManagementBackend.model.ImageModel;
 import com.example.PasswordManagementBackend.model.PasswordModel;
 import com.example.PasswordManagementBackend.model.UpdatePasswordModel;
@@ -20,6 +21,8 @@ public class PasswordServiceImpl implements PasswordService {
         password.setPassword(passwordModel.getPassword());
         password.setUsers(passwordModel.getUser());
         password.setImageUrl(password.getImageUrl());
+        password.setName(passwordModel.getName());
+        password.setType(passwordModel.getType());
         passwordRepository.save(password);
         return ResponseEntity.ok(password);
     }
@@ -36,10 +39,13 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
-    public String updateImage(Long passwordId, ImageModel imageModel) {
+    public String updateImage(Long passwordId, ImageModel imageModel) throws NoPasswordFoundException {
         UserPassword userPassword = passwordRepository.findById(passwordId).orElse(null);
-        assert userPassword != null;
+        if (userPassword == null){
+            throw new NoPasswordFoundException();
+        }
         userPassword.setImageUrl(imageModel.getImageUrl());
+        passwordRepository.save(userPassword);
         return "Image Updated Successfully";
     }
 

@@ -14,5 +14,7 @@ public class PasswordModel {
 
     private String password;
     private String imageUrl;
+    private String name;
+    private String type;
     private User user;
 }
