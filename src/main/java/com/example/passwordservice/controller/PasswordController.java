@@ -33,10 +33,18 @@ public class PasswordController {
         return ResponseEntity.ok(passwordService.getPasswordByUserId(userId, passwordType,page, size));
     }
 
-    @DeleteMapping("deletePassword")
+    @DeleteMapping("/deletePassword")
     public String deletePassword(@RequestParam(name = "passwordId") String passwordId) {
         passwordService.deletePassword(passwordId);
         return "Password removed successfully";
+    }
+
+    @PostMapping("/updatePassword")
+    public String updatePassword(
+            @RequestParam(name = "passwordId") String passwordId,
+            @RequestBody PasswordDto passwordDto) {
+        passwordService.updatePassword(passwordId, passwordDto);
+        return "Password updated successfully";
     }
 
 }

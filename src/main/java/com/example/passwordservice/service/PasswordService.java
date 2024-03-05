@@ -84,4 +84,15 @@ public class PasswordService {
         if (password == null) throw new UserNotFound("Password with password not found");
         passwordRepository.delete(password);
     }
+
+    public void updatePassword(String passwordId, PasswordDto passwordDto) {
+        Password password = passwordRepository.findById(passwordId).orElse(null);
+        if(password == null) throw new UserNotFound("Password with passwordId " + passwordId + " not found");
+        try {
+            password.setPassword(aesEncryptionHelper.decryptAES(passwordDto.getPassword()));
+            passwordRepository.save(password);
+        } catch (Exception e) {
+            log.info(e.getLocalizedMessage());
+        }
+    }
 }

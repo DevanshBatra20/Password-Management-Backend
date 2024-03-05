@@ -50,11 +50,10 @@ public class UserService {
             throw new UserNotFound("User with userId " + userId + " not found!");
         }
 
-        if (!userDto.getFirstName().isBlank() && !userDto.getFirstName().isEmpty()) user.setFirstName(userDto.getFirstName());
-        if (!userDto.getLastName().isBlank() && !userDto.getLastName().isEmpty()) user.setLastName(userDto.getLastName());
-        if (!userDto.getUsername().isBlank() && !userDto.getUsername().isEmpty()) user.setUsername(userDto.getUsername());
-        if (!userDto.getEmail().isBlank() && !userDto.getEmail().isEmpty()) user.setEmail(userDto.getEmail());
-
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
         userRepository.save(user);
     }
 
