@@ -15,14 +15,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Password {
 
-    @Id
-    private String passwordId;
-    private String passwordName;
-    private String password;
-    private String passwordType;
-    private String passwordImage;
+        @Id
+        private String passwordId;
+        private String passwordName;
+        private String password;
+        private String passwordType;
+        private String passwordImage;
 
-    @DBRef
-    private User user;
+        @DBRef
+        private User user;
 
 }

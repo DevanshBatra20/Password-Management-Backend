@@ -4,6 +4,7 @@ import com.example.passwordservice.dto.response.UserDto;
 import com.example.passwordservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -27,5 +28,14 @@ public class UserController {
     public String deleteUser(@RequestParam(name = "userId") String userId) {
         userService.deleteUser(userId);
         return "User with userId " + userId + " deleted successfully!";
+    }
+
+    @PostMapping("/uploadProfilePhoto")
+    public String uploadFile(
+            @RequestParam(name = "userId") String userId,
+            @RequestPart(value = "file") MultipartFile multipartFile) {
+        userService.uploadImage(userId, multipartFile);
+
+        return "Profile Picture updated successfully!";
     }
 }

@@ -1,9 +1,12 @@
 package com.example.passwordservice.controller;
 
-import com.example.passwordservice.dto.request.PasswordDto;
+import com.example.passwordservice.dto.PasswordDto;
 import com.example.passwordservice.service.PasswordService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/password")
@@ -21,8 +24,19 @@ public class PasswordController {
         return "Password Created successfully";
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Hello";
+    @GetMapping("/getPasswords")
+    public ResponseEntity<List<PasswordDto>> getPasswordByUserId(
+            @RequestParam(name = "userId") String userId,
+            @RequestParam(name = "type") String passwordType,
+            @RequestParam(name = "pageNumber", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int size) {
+        return ResponseEntity.ok(passwordService.getPasswordByUserId(userId, passwordType,page, size));
     }
+
+    @DeleteMapping("deletePassword")
+    public String deletePassword(@RequestParam(name = "passwordId") String passwordId) {
+        passwordService.deletePassword(passwordId);
+        return "Password removed successfully";
+    }
+
 }

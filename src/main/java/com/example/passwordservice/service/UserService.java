@@ -6,13 +6,17 @@ import com.example.passwordservice.exception.UserNotFound;
 import com.example.passwordservice.model.User;
 import com.example.passwordservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AmazonClient amazonClient;
 
     public UserDto getUserById(String userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -60,5 +64,22 @@ public class UserService {
             throw new UserNotFound("User with userId " + userId + " not found!");
         }
         userRepository.delete(user);
+    }
+
+    public void uploadImage(String userId, MultipartFile multipartFile) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new UserNotFound("User with userId " + userId + " not found");
+        }
+        if (user.getImageUrl() != null) {
+           try {
+              amazonClient.deleteFileFromS3Bucket(user.getImageUrl());
+           } catch (Exception e) {
+               log.error(e.getLocalizedMessage());
+           }
+      }
+        String imageUrl = amazonClient.uploadFile(multipartFile);
+        user.setImageUrl(imageUrl);
+        userRepository.save(user);
     }
 }
