@@ -1,6 +1,6 @@
 package com.example.passwordservice.controller;
 
-import com.example.passwordservice.dto.response.UserDto;
+import com.example.passwordservice.dto.UserDto;
 import com.example.passwordservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

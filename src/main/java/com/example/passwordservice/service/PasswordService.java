@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,7 +56,7 @@ public class PasswordService {
         Page<Password> passwordsPage;
         Pageable pageable = PageRequest.of(page, size);
 
-        if (passwordType.isEmpty() || passwordType.isBlank()) {
+        if (Objects.equals(passwordType, "all")) {
              passwordsPage = passwordRepository.findByUserUserId(userId, pageable);
         } else {
              passwordsPage = passwordRepository.findByUserUserIdAndPasswordType(userId, passwordType, pageable);

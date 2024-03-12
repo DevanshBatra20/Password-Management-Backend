@@ -27,7 +27,7 @@ public class PasswordController {
     @GetMapping("/getPasswords")
     public ResponseEntity<List<PasswordDto>> getPasswordByUserId(
             @RequestParam(name = "userId") String userId,
-            @RequestParam(name = "type") String passwordType,
+            @RequestParam(name = "type", defaultValue = "all") String passwordType,
             @RequestParam(name = "pageNumber", defaultValue = "0") int page,
             @RequestParam(name = "pageSize", defaultValue = "10") int size) {
         return ResponseEntity.ok(passwordService.getPasswordByUserId(userId, passwordType,page, size));

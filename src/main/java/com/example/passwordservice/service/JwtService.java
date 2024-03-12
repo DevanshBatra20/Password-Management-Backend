@@ -2,6 +2,7 @@ package com.example.passwordservice.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ public class JwtService {
     private String secretKey;
 
     private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000;
 
     public String extractUsername(String jwtToken) {return extractClaims(jwtToken, Claims::getSubject);}
 
@@ -50,7 +52,7 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
     }
 
-    private boolean isTokenExpired(String jwtToken) {
+    public boolean isTokenExpired(String jwtToken) {
         final Date expiration = extractExpiration(jwtToken);
         return expiration.before(new Date());
     }

@@ -1,10 +1,13 @@
 package com.example.passwordservice.service;
 
 import com.example.passwordservice.dto.request.LoginRequestDto;
+import com.example.passwordservice.dto.request.RefreshRequestDto;
 import com.example.passwordservice.dto.request.SignupRequestDto;
 import com.example.passwordservice.dto.response.AuthenticationResponseDto;
+import com.example.passwordservice.dto.response.RefreshResponseDto;
 import com.example.passwordservice.exception.InvalidCredentials;
 import com.example.passwordservice.exception.UserAlreadyExist;
+import com.example.passwordservice.model.RefreshToken;
 import com.example.passwordservice.model.Role;
 import com.example.passwordservice.model.User;
 import com.example.passwordservice.repository.UserRepository;
@@ -22,6 +25,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthenticationResponseDto signup(SignupRequestDto signupRequestDto) {
 
@@ -33,6 +37,8 @@ public class AuthenticationService {
             throw new UserAlreadyExist("User with email" + signupRequestDto.getEmail() + " already exist");
         }
 
+
+
         var user = User.builder()
                 .firstName(signupRequestDto.getFirstName())
                 .lastName(signupRequestDto.getLastName())
@@ -43,8 +49,10 @@ public class AuthenticationService {
                 .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
         return AuthenticationResponseDto.builder()
                 .jwtToken(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .user(user)
                 .build();
     }
@@ -69,9 +77,21 @@ public class AuthenticationService {
         }
 
         var jwtToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
         return AuthenticationResponseDto.builder()
                 .jwtToken(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .user(user)
+                .build();
+    }
+
+    public RefreshResponseDto refresh(RefreshRequestDto refreshRequestDto) {
+        RefreshToken refreshToken = refreshTokenService.findByToken(refreshRequestDto.getRefreshToken());
+        refreshToken = refreshTokenService.verifyExpiration(refreshToken);
+        String jwtToken = jwtService.generateToken(refreshToken.getUser());
+        return RefreshResponseDto.builder()
+                .jwtToken(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .build();
     }
 }

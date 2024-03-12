@@ -1,4 +1,4 @@
-package com.example.passwordservice.dto.response;
+package com.example.passwordservice.dto;
 
 import com.example.passwordservice.model.Role;
 import lombok.AllArgsConstructor;

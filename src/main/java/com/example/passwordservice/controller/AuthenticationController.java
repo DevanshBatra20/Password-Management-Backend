@@ -1,15 +1,15 @@
 package com.example.passwordservice.controller;
 
 import com.example.passwordservice.dto.request.LoginRequestDto;
+import com.example.passwordservice.dto.request.RefreshRequestDto;
 import com.example.passwordservice.dto.request.SignupRequestDto;
 import com.example.passwordservice.dto.response.AuthenticationResponseDto;
+import com.example.passwordservice.dto.response.RefreshResponseDto;
 import com.example.passwordservice.service.AuthenticationService;
+import com.example.passwordservice.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final JwtService jwtService;
 
     @PostMapping("/signup")
     public ResponseEntity<AuthenticationResponseDto> signup(
@@ -32,4 +33,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(loginRequestDto));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshResponseDto> refresh(
+            @RequestBody RefreshRequestDto refreshRequestDto
+            ) {
+        return ResponseEntity.ok(authenticationService.refresh(refreshRequestDto));
+    }
 }

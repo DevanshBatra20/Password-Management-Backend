@@ -1,6 +1,6 @@
 package com.example.passwordservice.service;
 
-import com.example.passwordservice.dto.response.UserDto;
+import com.example.passwordservice.dto.UserDto;
 import com.example.passwordservice.exception.InvalidParam;
 import com.example.passwordservice.exception.UserNotFound;
 import com.example.passwordservice.model.User;
